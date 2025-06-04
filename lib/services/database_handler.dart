@@ -1,11 +1,13 @@
 // lib/services/databaseService.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:comsicon/services/cloudinaryServices.dart';
+import 'package:comsicon/services/cloudinary_services.dart';
 import 'package:comsicon/services/gemini_service.dart';
 import 'package:comsicon/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
+
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class DatabaseService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -32,7 +34,6 @@ class DatabaseService {
 
       return true;
     } catch (e) {
-      print('Error updating lesson with AI content: $e');
       return false;
     }
   }
@@ -125,18 +126,13 @@ class DatabaseService {
     }
 
     try {
-      print('Starting upload to Cloudinary...');
-      print('Upload preset: ${AppConstants.cloudinaryUploadPreset}');
-
       // Upload to Cloudinary
       final CloudinaryService cloudinaryService = CloudinaryService();
       final String? imageUrl = await cloudinaryService.uploadImage(
         filePath,
-        AppConstants.cloudinaryUploadPreset,
+        dotenv.env['CLOUDINARY_UPLOAD_PRESET'] ?? '',
         folder: 'EdTech/Users',
       );
-
-      print('Cloudinary upload complete, URL: $imageUrl');
 
       if (imageUrl != null && imageUrl.isNotEmpty) {
         try {
@@ -168,7 +164,6 @@ class DatabaseService {
 
           return imageUrl;
         } catch (firestoreError) {
-          print('Firestore error: $firestoreError');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error saving photo URL: $firestoreError')),
           );
@@ -182,7 +177,6 @@ class DatabaseService {
         return null;
       }
     } catch (e) {
-      print('Profile photo upload error: $e');
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Error uploading photo: $e')));
@@ -205,7 +199,6 @@ class DatabaseService {
       }
       return null;
     } catch (e) {
-      print('Error getting user role: $e');
       return null;
     }
   }
@@ -226,7 +219,6 @@ class DatabaseService {
       }
       return null;
     } catch (e) {
-      print('Error fetching user data: $e');
       return null;
     }
   }
@@ -288,7 +280,6 @@ class DatabaseService {
 
       return true;
     } catch (error) {
-      print('Error saving profile data: $error');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to save profile data: $error')),
       );
@@ -321,7 +312,7 @@ class DatabaseService {
       if (imageFile != null) {
         coverImageUrl = await _cloudinaryService.uploadImage(
           imageFile.path,
-          AppConstants.cloudinaryUploadPreset,
+          dotenv.env['CLOUDINARY_UPLOAD_PRESET'] ?? '',
           folder: 'EdTech/Courses',
           fileName: 'course_${DateTime.now().millisecondsSinceEpoch}',
         );
@@ -346,7 +337,6 @@ class DatabaseService {
 
       return true;
     } catch (error) {
-      print('Error creating course: $error');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to create course: $error')),
       );
@@ -391,7 +381,6 @@ class DatabaseService {
 
   Future<Map<String, dynamic>?> getCourseById(String courseId) async {
     try {
-      print("Fetching course with ID: $courseId");
       DocumentSnapshot doc =
           await _firestore.collection('courses').doc(courseId).get();
 
@@ -401,16 +390,13 @@ class DatabaseService {
         return data;
       }
 
-      print("Course not found with ID: $courseId");
       return null;
     } catch (e) {
-      print('Error getting course by ID: $e');
       return null;
     }
   }
 
   Stream<List<Map<String, dynamic>>> fetchLessonsForCourse(String courseId) {
-    print("Starting stream for lessons with courseId: $courseId");
     return _firestore
         .collection('lessons')
         .where('courseId', isEqualTo: courseId)
@@ -430,7 +416,6 @@ class DatabaseService {
             return orderA.compareTo(orderB);
           });
 
-          print("Fetched ${lessons.length} lessons for course $courseId");
           return lessons;
         });
   }
@@ -450,7 +435,7 @@ class DatabaseService {
       if (file != null && (contentType == 'image' || contentType == 'pdf')) {
         fileUrl = await _cloudinaryService.uploadImage(
           file.path,
-          AppConstants.cloudinaryUploadPreset,
+          dotenv.env['CLOUDINARY_UPLOAD_PRESET'] ?? '',
           folder: 'EdTech/Lessons/${contentType}s',
           fileName: '${contentType}_${DateTime.now().millisecondsSinceEpoch}',
         );
@@ -518,7 +503,6 @@ class DatabaseService {
 
       return true;
     } catch (e) {
-      print('Error creating lesson: $e');
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Failed to create lesson: $e')));
@@ -537,7 +521,6 @@ class DatabaseService {
 
       return true;
     } catch (e) {
-      print('Error deleting lesson: $e');
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Failed to delete lesson: $e')));
@@ -573,7 +556,6 @@ class DatabaseService {
 
       return true;
     } catch (e) {
-      print('Error deleting course: $e');
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Failed to delete course: $e')));

@@ -1,13 +1,13 @@
 import 'dart:io';
 import 'package:cloudinary/cloudinary.dart';
-import 'package:comsicon/utils/constants.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CloudinaryService {
   final Cloudinary _cloudinary;
 
   CloudinaryService()
     : _cloudinary = Cloudinary.unsignedConfig(
-        cloudName: AppConstants.cloudinaryCloudName,
+        cloudName: dotenv.env['CLOUDINARY_CLOUD_NAME'] ?? '',
       );
 
   Future<String?> uploadImage(
@@ -20,25 +20,17 @@ class CloudinaryService {
       // Check if file exists
       final File file = File(filePath);
       if (!await file.exists()) {
-        print('File does not exist at path: $filePath');
         return null;
       }
 
       // Ensure file size isn't zero
       final fileStats = await file.stat();
       if (fileStats.size == 0) {
-        print('File exists but has zero size');
         return null;
       }
 
-      print('Uploading file: $filePath');
-      print('To folder: ${folder ?? "default"}');
-      print('With preset: $uploadPreset');
-      print('Cloudinary cloud name: ${AppConstants.cloudinaryCloudName}');
-
       // Verify upload preset is correct - this is crucial
       if (uploadPreset.isEmpty) {
-        print('Error: Upload preset is empty');
         return null;
       }
 
@@ -51,17 +43,11 @@ class CloudinaryService {
       );
 
       if (response.isSuccessful) {
-        print('Upload successful! URL: ${response.secureUrl}');
         return response.secureUrl;
       } else {
-        print('Cloudinary upload error: ${response.error}');
-        print('Status code: ${response.statusCode}');
-        // Remove or replace with an existing property
         return null;
       }
     } catch (e) {
-      print('Exception during upload: $e');
-      print('Stack trace: ${StackTrace.current}');
       return null;
     }
   }

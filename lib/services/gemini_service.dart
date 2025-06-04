@@ -1,14 +1,19 @@
 // lib/services/gemini_service.dart
 import 'dart:convert';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 class GeminiService {
   final GenerativeModel _model;
-  static const String _apiKey = 'AIzaSyBK1DSEjT65eWkS385MBYpI9TaRZzRY4b4';
+  final String _apiKey;
 
   GeminiService()
-    : _model = GenerativeModel(model: 'gemini-1.5-pro', apiKey: _apiKey);
+    : _apiKey = dotenv.env['GEMINI_API_KEY'] ?? '',
+      _model = GenerativeModel(
+        model: 'gemini-1.5-pro',
+        apiKey: dotenv.env['GEMINI_API_KEY'] ?? '',
+      );
 
   Future<String> generateSummary(String content) async {
     try {

@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:comsicon/pages/sideBar.dart';
-import 'package:comsicon/services/databaseHandler.dart';
+import 'package:comsicon/pages/side_bar.dart';
+import 'package:comsicon/services/database_handler.dart';
 import 'package:comsicon/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';

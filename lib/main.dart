@@ -1,18 +1,18 @@
 import 'package:comsicon/firebase_options.dart';
-import 'package:comsicon/pages/authenticationPage.dart';
-import 'package:comsicon/pages/courseDetails.dart';
-import 'package:comsicon/pages/homePage.dart';
-import 'package:comsicon/pages/loginPage.dart';
-import 'package:comsicon/pages/profileSetupPage.dart';
-import 'package:comsicon/pages/signupPage.dart';
-import 'package:comsicon/pages/starterPage.dart';
-import 'package:comsicon/pages/studentDashboard.dart';
-import 'package:comsicon/pages/tutorDashboard.dart';
+import 'package:comsicon/pages/authentication_page.dart';
+import 'package:comsicon/pages/course_details.dart';
+import 'package:comsicon/pages/home_page.dart';
+import 'package:comsicon/pages/login_page.dart';
+import 'package:comsicon/pages/profile_setup_page.dart';
+import 'package:comsicon/pages/signup_page.dart';
+import 'package:comsicon/pages/starter_page.dart';
+import 'package:comsicon/pages/student_dashboard.dart';
+import 'package:comsicon/pages/tutor_dashboard.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 // Import your pages here
-import 'package:comsicon/pages/splashScreen.dart';
+import 'package:comsicon/pages/splash_screen.dart';
 // Add your other page imports as needed, for example:
 // import 'package:comsicon/pages/homePage.dart';
 // import 'package:comsicon/pages/authPage.dart';
@@ -20,14 +20,17 @@ import 'package:comsicon/pages/splashScreen.dart';
 
 // Import your theme files (you'll need to create these)
 import 'package:comsicon/theme/app_theme.dart' show lightTheme, darkTheme;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // If you need notifications, you can initialize them here
-  // Similar to your previous project with AwesomeNotifications
-
+  try {
+    await dotenv.load(fileName: ".env"); // Load environment variables
+  } catch (e) {
+    throw Exception('Error loading .env file: $e'); // Print error if any
+  }
   runApp(const MyApp());
 }
 

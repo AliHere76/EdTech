@@ -1,4 +1,4 @@
-import 'package:comsicon/services/databaseHandler.dart';
+import 'package:comsicon/services/database_handler.dart';
 import 'package:flutter/material.dart';
 
 class CustomSidebar extends StatefulWidget {

@@ -1,5 +1,5 @@
 // lib/screens/course_details_screen.dart
-import 'package:comsicon/services/databaseHandler.dart';
+import 'package:comsicon/services/database_handler.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
